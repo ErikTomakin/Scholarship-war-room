@@ -285,7 +285,6 @@ tr:hover td { background:rgba(255,255,255,0.015); }
       <button class="tab-btn active" onclick="showTab('dashboard',this)">Command</button>
       <button class="tab-btn" onclick="showTab('tracker',this)">Tracker</button>
       <button class="tab-btn" onclick="showTab('essays',this)">Essay Vault</button>
-
       <button class="tab-btn" onclick="showTab('coach',this)">AI Coach</button>
       <button class="tab-btn" onclick="showTab('drop',this)">🎯 Daily Drop</button>
       <button class="tab-btn" onclick="showTab('hq',this)">🚀 App HQ</button>
@@ -344,8 +343,6 @@ tr:hover td { background:rgba(255,255,255,0.015); }
       </div>
       <div id="essayList"></div>
     </div>
-
-
 
     <!-- COACH -->
     <div class="panel" id="panel-coach">
@@ -623,7 +620,6 @@ const USERS = {
 
 let currentUser=null, scholarships=[], essays=[], leads=[], packets=[], profiles={}, essayFilter='all', viewEssayId=null, selectedWho=null, viewPacketId=null, hqActiveTab='generate';
 
-// ── INIT ──
 async function init() {
   await new Promise(r=>setTimeout(r,1000));
   document.getElementById('loadingOverlay').style.display='none';
@@ -665,7 +661,6 @@ function doLogout() {
   document.querySelectorAll('.who-btn').forEach(b=>b.className='who-btn');
 }
 
-// ── LOAD ALL ──
 async function loadAll() {
   try {
     const [sr,er,lr,pr,pfr]=await Promise.all([
@@ -951,14 +946,13 @@ async function deleteE() {
   closeModal('mVE');renderEssays();toast('Essay removed.');
 }
 
-// ── DROP KEYWORDS (merged from NicheHunter) ──
+// ── DROP KEYWORDS ──
 const KKW=['Storyboard Artist','Character Design','SJSU BFA','Animation Arts','Women in Animation','Illustration','2D Animation','Concept Artist','Visual Storytelling','Bay Area Arts','First Generation Artist','Latina in Arts','Animation Fund','BFA Scholarship','Narrative Arts'];
 const HKW=['Valedictorian Transfer','Phi Theta Kappa','CC to University','Academic Merit Transfer','STEM Transfer','Community College Excellence','First Generation Transfer','Associate Degree Honors','Dean List Scholar','Transfer Student Fund','Leadership Transfer','Non-Traditional Student','Academic Achievement','PTK Scholarship'];
 
 function initDropKeywords() {
   const student = document.getElementById('dropStudent')?.value || 'both';
   updateDropKWVisibility(student);
-  // Wire student selector to toggle keyword sections
   const sel = document.getElementById('dropStudent');
   if (sel && !sel._kwWired) {
     sel.addEventListener('change', () => updateDropKWVisibility(sel.value));
@@ -970,7 +964,6 @@ function updateDropKWVisibility(student) {
   document.getElementById('dropKWKarah').style.display   = student === 'Karah'    ? 'block' : 'none';
   document.getElementById('dropKWHarrison').style.display= student === 'Harrison' ? 'block' : 'none';
   document.getElementById('dropKWBoth').style.display    = student === 'both'     ? 'block' : 'none';
-  // Populate whichever section is visible
   const kk  = document.getElementById('karahKW');
   const hh  = document.getElementById('harrisonKW');
   const kkb = document.getElementById('karahKWBoth');
@@ -1047,7 +1040,7 @@ Use sections: 🎯 RECOMMENDED ESSAY | 💡 WHY IT FITS | ✏️ SUGGESTED TWEAK
   document.getElementById('coachBtn').disabled=false;
 }
 
-// ── DAILY DROP (RELIABLE — RYAN'S SOURCE TAXONOMY + TARGETED GOOGLE SEARCHES) ──
+// ── DAILY DROP ──
 async function runDrop() {
   const btn = document.getElementById('dropBtn');
   const student = document.getElementById('dropStudent').value;
@@ -1066,29 +1059,25 @@ async function runDrop() {
     <div style="font-size:12px;color:var(--muted);">Targeting: Rotary clubs · Community foundations · Credit unions · VFW/Elks · Faith orgs · Local chambers · Memorial funds</div>
   </div>`;
 
-
-  // Source taxonomy buckets — Ryan Murphy's low-competition framework, Bay Area focused
   const SOURCE_BUCKETS = [
-    { label: 'Rotary Club',         query: (p) => `"Rotary Club" "San Jose" OR "Santa Clara" OR "Bay Area" scholarship ${p} 2025 site:.org` },
-    { label: 'Community Foundation',query: (p) => `"community foundation" "Silicon Valley" OR "San Jose" OR "Bay Area" scholarship ${p} 2025` },
-    { label: 'Credit Union',        query: (p) => `"credit union" scholarship "Bay Area" OR "California" ${p} 2025 site:.org` },
-    { label: 'VFW / American Legion',query:(p) => `"VFW" OR "American Legion" scholarship California ${p} 2025 site:.org` },
-    { label: 'Elks / Eagles Lodge', query: (p) => `"Elks Lodge" OR "Eagles" scholarship "San Jose" OR "California" ${p} 2025` },
-    { label: 'Memorial Fund',       query: (p) => `"memorial scholarship" "San Jose" OR "Silicon Valley" OR "Bay Area" ${p} 2025 site:.org` },
-    { label: 'Faith Organization',  query: (p) => `"church" OR "mosque" OR "temple" scholarship "San Jose" OR "Bay Area" ${p} 2025` },
-    { label: 'Chamber of Commerce', query: (p) => `"chamber of commerce" scholarship "San Jose" OR "Santa Clara County" ${p} 2025` },
-    { label: 'Professional Assoc.', query: (p) => `professional association local chapter scholarship California ${p} 2025 site:.org` },
-    { label: 'Employer / Union',    query: (p) => `union OR employer scholarship "Bay Area" OR "San Jose" ${p} "first generation" 2025` },
+    { label: 'Rotary Club',          query: (p) => `"Rotary Club" "San Jose" OR "Santa Clara" OR "Bay Area" scholarship ${p} 2025 site:.org` },
+    { label: 'Community Foundation', query: (p) => `"community foundation" "Silicon Valley" OR "San Jose" OR "Bay Area" scholarship ${p} 2025` },
+    { label: 'Credit Union',         query: (p) => `"credit union" scholarship "Bay Area" OR "California" ${p} 2025 site:.org` },
+    { label: 'VFW / American Legion',query: (p) => `"VFW" OR "American Legion" scholarship California ${p} 2025 site:.org` },
+    { label: 'Elks / Eagles Lodge',  query: (p) => `"Elks Lodge" OR "Eagles" scholarship "San Jose" OR "California" ${p} 2025` },
+    { label: 'Memorial Fund',        query: (p) => `"memorial scholarship" "San Jose" OR "Silicon Valley" OR "Bay Area" ${p} 2025 site:.org` },
+    { label: 'Faith Organization',   query: (p) => `"church" OR "mosque" OR "temple" scholarship "San Jose" OR "Bay Area" ${p} 2025` },
+    { label: 'Chamber of Commerce',  query: (p) => `"chamber of commerce" scholarship "San Jose" OR "Santa Clara County" ${p} 2025` },
+    { label: 'Professional Assoc.',  query: (p) => `professional association local chapter scholarship California ${p} 2025 site:.org` },
+    { label: 'Employer / Union',     query: (p) => `union OR employer scholarship "Bay Area" OR "San Jose" ${p} "first generation" 2025` },
   ];
 
-  // Student-specific keyword for query injection
   const studentKeyword = student === 'Karah'
     ? 'animation OR arts OR illustration OR "visual arts"'
     : student === 'Harrison'
     ? '"transfer student" OR "Phi Theta Kappa" OR valedictorian OR "academic merit"'
     : 'arts OR animation OR "transfer student" OR "first generation"';
 
-  // Merge any manually selected keyword boosters
   const selectedKW = getSelectedKeywords();
   const kwBoosterBlock = selectedKW.length
     ? `\n\nKEYWORD BOOSTERS (selected by user — weight these heavily in your targeting):\n${selectedKW.map(k=>`- ${k}`).join('\n')}`
@@ -1100,14 +1089,15 @@ async function runDrop() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 1500,
         system: `You are a scholarship research specialist who finds REAL, OBSCURE, LOW-COMPETITION scholarships using Ryan Murphy's Scholarship Navigator methodology. Focus exclusively on: local Rotary clubs, community foundations, credit unions, VFW/American Legion posts, Elks/Eagles lodges, memorial funds, faith organizations, chambers of commerce, local professional association chapters, and employer/union scholarships. These are the sources most students NEVER check. Avoid Fastweb, Scholarships.com, and other mega-databases entirely.
 
 CRITICAL RULES:
 - Target Bay Area / San Jose CA area for local sources
 - Each lead must come from a DIFFERENT source bucket (one Rotary, one foundation, one credit union, etc.)
 - Assign student "Karah", "Harrison", or "Both" based on fit
-- Include a SPECIFIC Google search query the family can run to find this exact scholarship
+- ALWAYS include a real apply_url — the direct URL to apply or learn more about the scholarship (e.g. https://rotary-sanjose.org/scholarships). Do NOT include query strings or tracking params — strip everything from ? onward.
+- Include a google_query the family can run to verify/find this scholarship
 - Return ONLY a valid JSON array — no markdown fences, no preamble, just [ ... ]`,
         messages: [{
           role: 'user',
@@ -1121,13 +1111,11 @@ ${SOURCE_BUCKETS.map((b, i) => `${i+1}. ${b.label} — example query: ${b.query(
 YOUR RESPONSE MUST BE ONLY A JSON ARRAY. NO TEXT BEFORE OR AFTER. NO MARKDOWN. NO BACKTICKS.
 Start your response with the [ character. End with the ] character. Nothing else.
 
-Each of the 6 objects must have these keys (use double quotes for all strings, no trailing commas):
-"name", "org", "source_bucket", "student", "amount_range", "why_low_comp", "why_fits", "google_query", "tags", "mail_in", "win_score"
-
-URL RULE: Any URLs must be clean — strip everything from the ? onward. e.g. https://site.org/scholarship?utm_source=google becomes https://site.org/scholarship
+Each of the 6 objects must have these exact keys (use double quotes for all strings, no trailing commas):
+"name", "org", "source_bucket", "student", "amount_range", "why_low_comp", "why_fits", "apply_url", "google_query", "tags", "mail_in", "win_score"
 
 Example of ONE object (do not copy this, generate real ones):
-{"name":"San Jose Rotary Scholarship","org":"Rotary Club of San Jose","source_bucket":"Rotary Club","student":"Karah","amount_range":"$1,000-$2,500","why_low_comp":"Most students never think to check local Rotary chapters directly","why_fits":"Supports Bay Area arts students with community involvement","google_query":"Rotary Club San Jose scholarship arts 2025 site:.org","tags":"local, arts, Bay Area","mail_in":false,"win_score":8}`
+{"name":"San Jose Rotary Scholarship","org":"Rotary Club of San Jose","source_bucket":"Rotary Club","student":"Karah","amount_range":"$1,000-$2,500","why_low_comp":"Most students never think to check local Rotary chapters directly","why_fits":"Supports Bay Area arts students with community involvement","apply_url":"https://rotary-sanjose.org/scholarships","google_query":"Rotary Club San Jose scholarship arts 2025 site:.org","tags":"local, arts, Bay Area","mail_in":false,"win_score":8}`
         }]
       })
     });
@@ -1145,13 +1133,12 @@ Example of ONE object (do not copy this, generate real ones):
     }
 
     let text = (data.content?.map(c => c.text || '').join('') || '').trim().replace(/```json|```/gi, '').trim();
-    window._lastDropRaw = text; // save for debug panel
+    window._lastDropRaw = text;
     const start = text.indexOf('['), end = text.lastIndexOf(']');
     if (start === -1 || end === -1) throw new Error('Could not parse leads from response.');
     const newLeads = JSON.parse(text.substring(start, end + 1));
     if (!Array.isArray(newLeads) || !newLeads.length) throw new Error('Empty leads array returned.');
 
-    // Save to Supabase (non-fatal)
     try {
       const toInsert = newLeads.map(l => ({ ...l, generated_date: new Date().toISOString().split('T')[0] }));
       const { data: saved } = await sb.from('leads').insert(toInsert).select();
@@ -1182,10 +1169,10 @@ function renderDropLeads(newLeads) {
   out.innerHTML = newLeads.map(l => {
     const studentColor = l.student === 'Karah' ? 'var(--karah)' : l.student === 'Harrison' ? 'var(--harrison)' : 'var(--gold)';
     const wc = l.win_score >= 9 ? 'wc-hi' : l.win_score >= 7 ? 'wc-mid' : 'wc-lo';
-    // Use google_query (new field) with fallback to search_query (old field)
     const gq = (l.google_query || l.search_query || l.name + ' scholarship').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/`/g,'\\`');
     const ne = (l.name || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const ae = (l.amount_range || '').replace(/'/g,"\\'");
+    const applyUrl = (l.apply_url || '').replace(/'/g,"\\'");
     const bucket = l.source_bucket || '';
 
     return `<div class="lead-card">
@@ -1215,12 +1202,17 @@ function renderDropLeads(newLeads) {
         <div class="lead-why-label" style="color:var(--gold);">Why this fits</div>
         <div class="lead-why-text">${l.why_fits}</div>
       </div>
+      ${applyUrl ? `<div style="margin-top:10px;background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:10px 12px;">
+        <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--success);margin-bottom:5px;">🌐 Application URL</div>
+        <a href="${applyUrl}" target="_blank" style="font-size:12px;color:var(--success);word-break:break-all;line-height:1.5;text-decoration:none;">${applyUrl}</a>
+      </div>` : ''}
       <div style="margin-top:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
         <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Google Search Query</div>
         <code style="font-size:11px;color:var(--harrison);word-break:break-all;line-height:1.5;">${l.google_query || l.search_query || ''}</code>
       </div>
       <div class="lead-actions" style="margin-top:12px;">
-        <button class="btn btn-gold btn-sm" onclick="window.open('https://www.google.com/search?q='+encodeURIComponent('${gq}'),'_blank')">🔍 Search Google</button>
+        ${applyUrl ? `<button class="btn btn-gold btn-sm" onclick="window.open('${applyUrl}','_blank')">🌐 Apply Now</button>` : ''}
+        <button class="btn ${applyUrl ? 'btn-ghost' : 'btn-gold'} btn-sm" onclick="window.open('https://www.google.com/search?q='+encodeURIComponent('${gq}'),'_blank')">🔍 Search Google</button>
         <button class="btn btn-ghost btn-sm" onclick="addLeadToTracker('${ne}','${ae}',this)">+ Add to Tracker</button>
         <button class="btn btn-ghost btn-sm" onclick="copyTxt('${gq}')">📋 Copy Query</button>
       </div>
